@@ -1,4 +1,5 @@
 from OpenGL.GL import *
+import os.path
 
 class GLSLShader:
     def __init__(self, file_path):
@@ -80,3 +81,7 @@ class GLSLShader:
     def set_uniform4f(self, uniform_name, v1, v2, v3, v4):
         location = self.get_uniform_location(uniform_name)
         glUniform4f(location, v1, v2, v3, v4)
+
+    def set_uniform_mat4fv(self, uniform_name, matrix):
+        location = self.get_uniform_location(uniform_name)
+        glUniformMatrix4fv(location, 1, GL_FALSE, matrix)

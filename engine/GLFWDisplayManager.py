@@ -1,4 +1,5 @@
 import glfw
+from OpenGL.GL import glViewport
 
 class DisplayManager:
 
@@ -18,6 +19,7 @@ class DisplayManager:
         self.delta_time = 0
         self.last_frame = 0
         self.fullscreen = False
+        self.on_key_press_methods = []
 
     def create_window(self, width, height, title):
         self.width = width
@@ -55,8 +57,13 @@ class DisplayManager:
             refresh_rate = glfw.get_video_mode(monitor).refresh_rate
             glfw.set_window_monitor(self.window_ID, monitor, 0, 0, width, height, refresh_rate)
 
+            # Separate from glfw if necessary
+            glViewport(0, 0, width, height)
+
         else:
             glfw.set_window_monitor(self.window_ID, None, 50, 50, self.width, self.height, glfw.DONT_CARE)
+            # Separate from glfw if necessary
+            glViewport(0, 0, self.width, self.height)
 
         self.fullscreen = not self.fullscreen
 
