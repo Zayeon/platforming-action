@@ -1,6 +1,8 @@
 from engine.GLFWDisplayManager import DisplayManager
 from engine.opengl.GLSLShader import GLSLShader
 from engine.opengl.GLTextureAtlas import TextureAtlas
+from engine.opengl.VAO import VAO
+from engine.opengl.Quad import Quad
 
 from OpenGL.GL import *
 import pyrr
@@ -15,43 +17,25 @@ def main():
     display_manager.create_window(1280, 720, "Untitled Platformer")
 
     # Test OpenGL
-    vertex_data = np.array([
+    vertex_data = [
         -0.5, -0.5, 0.0,
-        0.5, -0.5, 0.0,
-        -0.5, 0.5, 0.0,
         -0.5, 0.5, 0.0,
         0.5, 0.5, 0.0,
-        0.5, -0.5, 0.0
-    ], dtype=np.float32)
+        0.5, -0.5, 0.0,
+    ]
 
-    texture_coords = np.array([
+    texture_coords =[
         0, 0,
-        1, 0,
-        0, 1,
         0, 1,
         1, 1,
         1, 0
-    ], dtype=np.float32)
+    ]
+
+
 
     texture_path = os.path.join("res", "jerma_sus.jpg")
     jerma_texture = TextureAtlas(texture_path, [1, 1])
-    vao = glGenVertexArrays(1)
-    glBindVertexArray(vao)
-
-
-    vbo = glGenBuffers(1)
-    glBindBuffer(GL_ARRAY_BUFFER, vbo)
-    glBufferData(GL_ARRAY_BUFFER, vertex_data.nbytes, vertex_data, GL_STATIC_DRAW)
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertex_data.itemsize * 3, ctypes.c_void_p(0))
-    glBindBuffer(GL_ARRAY_BUFFER, 0)
-
-    vbo2 = glGenBuffers(1)
-    glBindBuffer(GL_ARRAY_BUFFER, vbo2)
-    glBufferData(GL_ARRAY_BUFFER, texture_coords.nbytes, texture_coords, GL_STATIC_DRAW)
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, texture_coords.itemsize * 2, ctypes.c_void_p(0))
-    glBindBuffer(GL_ARRAY_BUFFER, 0)
-
-    glBindVertexArray(0)
+    jerma_quad = Quad(vertex_data, jerma_texture)
 
     coloured_shader_path = os.path.join("engine", "opengl", "shaders", "coloured_shader.txt")
     coloured_shader = GLSLShader(coloured_shader_path)
@@ -62,7 +46,7 @@ def main():
     # position: (0.25, 0) rotation: 20degrees scale: 0.5
     translation = pyrr.matrix44.create_from_translation(pyrr.Vector3([0, 0, 0]))
     rotation = pyrr.matrix44.create_from_z_rotation(radians(0))
-    scale = pyrr.matrix44.create_from_scale(np.array([5, 5, 5]))
+    scale = pyrr.matrix44.create_from_scale(np.array([10, 10, 10]))
 
     model_matrix = np.matmul(scale, np.matmul(rotation, translation))
 
@@ -94,10 +78,11 @@ def main():
         # Use shader
         textured_shader.bind()
 
-        glBindVertexArray(vao)
+        jerma_quad.vao.bind()
         glBindTexture(GL_TEXTURE_2D, jerma_texture.get_ID())
         glEnableVertexAttribArray(0)
         glEnableVertexAttribArray(1)
+        glDrawElements(GL_TRIANGLES, jerma_quad.vao.get_vertex_count(), GL_UNSIGNED_BYTE, None)
         glDrawArrays(GL_TRIANGLES, 0, 6)
 
         glDisableVertexAttribArray(0)

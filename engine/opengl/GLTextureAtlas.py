@@ -29,3 +29,11 @@ class TextureAtlas:
 
     def get_ID(self):
         return self.texture_ID
+
+    def get_top_left_tex_coords(self):
+        return [
+            0, 0,
+            0, 1,
+            1, 1,
+            1, 0
+        ]
