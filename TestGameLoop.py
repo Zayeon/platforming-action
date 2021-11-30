@@ -7,9 +7,9 @@ from engine.opengl.Quad import Quad
 from OpenGL.GL import *
 import pyrr
 import numpy as np
+import glfw
 import os.path
 from math import radians
-
 
 def main():
 
@@ -31,11 +31,21 @@ def main():
         1, 0
     ]
 
+    # texture_path = os.path.join("res", "jerma_sus.png")
+    # jerma_texture = TextureAtlas(texture_path, 1, 1, 128, 128)
+    texture_path = os.path.join("res", "troll_despair.png")
+    troll_despair = TextureAtlas(texture_path, 44, 5, 128, 128)
+    texture_path = os.path.join("res", "dink_donk.png")
+    dink_donk = TextureAtlas(texture_path, 3, 3, 128, 128)
 
+    example_quad = Quad(vertex_data, dink_donk)
 
-    texture_path = os.path.join("res", "jerma_sus.jpg")
-    jerma_texture = TextureAtlas(texture_path, [1, 1])
-    jerma_quad = Quad(vertex_data, jerma_texture)
+    # Bind right arrow to advancing frame
+    # def on_right_arrow_press():
+    #     troll_despair.next_frame()
+    #     example_quad.set_tex_coords(troll_despair.get_tex_coords())
+    #
+    # display_manager.bind_key_down(glfw.KEY_RIGHT, on_right_arrow_press)
 
     coloured_shader_path = os.path.join("engine", "opengl", "shaders", "coloured_shader.txt")
     coloured_shader = GLSLShader(coloured_shader_path)
@@ -78,16 +88,19 @@ def main():
         # Use shader
         textured_shader.bind()
 
-        jerma_quad.vao.bind()
-        glBindTexture(GL_TEXTURE_2D, jerma_texture.get_ID())
+        example_quad.vao.bind()
+        glBindTexture(GL_TEXTURE_2D, example_quad.texture_atlas.get_ID())
         glEnableVertexAttribArray(0)
         glEnableVertexAttribArray(1)
-        glDrawElements(GL_TRIANGLES, jerma_quad.vao.get_vertex_count(), GL_UNSIGNED_BYTE, None)
+        glDrawElements(GL_TRIANGLES, example_quad.vao.get_vertex_count(), GL_UNSIGNED_BYTE, None)
         glDrawArrays(GL_TRIANGLES, 0, 6)
 
         glDisableVertexAttribArray(0)
         glDisableVertexAttribArray(1)
         glBindTexture(GL_TEXTURE_2D, 0)
+
+        dink_donk.next_frame()
+        example_quad.set_tex_coords(dink_donk.get_tex_coords())
 
         textured_shader.unbind()
 

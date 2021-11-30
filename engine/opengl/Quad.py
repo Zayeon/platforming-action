@@ -13,7 +13,7 @@ class Quad:
         self.set_indices(self.indices)
 
         self.texture_atlas = texture_atlas
-        self.set_tex_coords(self.texture_atlas.get_top_left_tex_coords())
+        self.set_tex_coords(self.texture_atlas.get_tex_coords())
 
     def set_positions(self, positions):
         float_positions = np.array(positions, dtype=np.float32)

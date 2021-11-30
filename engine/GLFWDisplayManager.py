@@ -19,7 +19,7 @@ class DisplayManager:
         self.delta_time = 0
         self.last_frame = 0
         self.fullscreen = False
-        self.on_key_press_methods = []
+        self.on_key_press_methods = {}
 
     def create_window(self, width, height, title):
         self.width = width
@@ -49,6 +49,18 @@ class DisplayManager:
         if key == glfw.KEY_F11 and action == glfw.PRESS:
             self.toggle_fullscreen()
 
+        # Goes through all the bound functions by key and executes them if that key was pressed
+        for k in self.on_key_press_methods:
+            if key == k and action == glfw.PRESS:
+                for f in self.on_key_press_methods[k]:
+                    f()
+
+    def bind_key_down(self, key, function):
+        if not key in self.on_key_press_methods:
+            self.on_key_press_methods[key] = []
+
+        self.on_key_press_methods[key].append(function)
+
     def toggle_fullscreen(self):
         if not self.fullscreen:
             monitor = glfw.get_primary_monitor()
@@ -66,8 +78,6 @@ class DisplayManager:
             glViewport(0, 0, self.width, self.height)
 
         self.fullscreen = not self.fullscreen
-
-
 
     def start_frame(self):
         glfw.poll_events()
