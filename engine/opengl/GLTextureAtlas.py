@@ -55,14 +55,6 @@ class TextureAtlas:
     def get_ID(self):
         return self.texture_ID
 
-    def get_top_left_tex_coords(self):
-        return [
-            0, 0,
-            0, 1,
-            1, 1,
-            1, 0
-        ]
-
     def next_frame(self):
         self.current_frame += 1
         if self.current_frame >= self.n_frames:

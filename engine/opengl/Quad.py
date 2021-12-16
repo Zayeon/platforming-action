@@ -1,4 +1,6 @@
 import numpy as np
+import pyrr
+from math import radians
 from engine.opengl.VAO import VAO
 
 class Quad:
@@ -6,6 +8,9 @@ class Quad:
                2, 3, 0]
 
     def __init__(self, positions, texture_atlas):
+        self.position = pyrr.Vector3([0, 0, 0])
+        self.rotation = pyrr.matrix44.create_from_z_rotation(radians(0))
+        self.scale = pyrr.matrix44.create_from_scale(np.array([1, 1, 1]))
         self.vao = VAO(len(self.indices))
         self.set_positions(positions)
 
@@ -29,3 +34,13 @@ class Quad:
         uint_indices = np.array(indices, dtype=np.uint8)
         self.vao.bind()
         self.vao.bind_indices_buffer(uint_indices)
+
+    def set_position(self, x, y):
+        self.position[0] = x
+        self.position[1] = y
+
+    def set_rotation(self, rotation):
+        self.rotation = pyrr.matrix44.create_from_z_rotation(radians(rotation))
+
+    def set_scale(self, scale_x, scale_y):
+        self.scale = pyrr.matrix44.create_from_scale(np.array([scale_x, scale_y, 1]))
