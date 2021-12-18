@@ -32,12 +32,15 @@ class QuadRenderer:
         return sorted_quads
 
     def render_quad(self, quad):
+        glEnableVertexAttribArray(0)
+        glEnableVertexAttribArray(1)
         translation = pyrr.matrix44.create_from_translation(quad.position)
         model_matrix = np.matmul(quad.scale, np.matmul(quad.rotation, translation))
         self.quad_shader.set_uniform_mat4fv("model_matrix", model_matrix)
 
         quad.vao.bind()
         glDrawElements(GL_TRIANGLES, quad.vao.get_vertex_count(), GL_UNSIGNED_BYTE, None)
+        quad.vao.unbind()
 
     def render(self, quads, camera):
         # Move the scene not the camera
@@ -49,8 +52,6 @@ class QuadRenderer:
 
         for texture_ID in sorted_quads:
             glBindTexture(GL_TEXTURE_2D, texture_ID)
-            glEnableVertexAttribArray(0)
-            glEnableVertexAttribArray(1)
             for quad in sorted_quads[texture_ID]:
                 self.render_quad(quad)
 

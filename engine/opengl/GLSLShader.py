@@ -71,12 +71,13 @@ class GLSLShader:
 
     def get_uniform_location(self, uniform_name):
         # Creates a buffer of previously used uniforms to reduce calls of glGetUniformLocation
-        if not (uniform_name in self.uniforms):
-            location = glGetUniformLocation(self.shader_ID, uniform_name)
-            self.uniforms[uniform_name] = location
-        else:
-            location = self.uniforms[uniform_name]
-        return location
+        # if not (uniform_name in self.uniforms):
+        #     location = glGetUniformLocation(self.shader_ID, uniform_name)
+        #     self.uniforms[uniform_name] = location
+        # else:
+        #     location = self.uniforms[uniform_name]
+        # return location
+        return glGetUniformLocation(self.shader_ID, uniform_name)
 
     def set_uniform4f(self, uniform_name, v1, v2, v3, v4):
         location = self.get_uniform_location(uniform_name)
