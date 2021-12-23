@@ -5,7 +5,7 @@ class TextureAtlas:
 
     all_textures = {}
 
-    def __init__(self, file_path, n_frames, columns, unit_width, unit_height):
+    def __init__(self, file_path, n_frames, columns, unit_width, unit_height, flip=True):
         # Don't need to know rows since they can be calculated from n_textures and columns
         self.n_frames = n_frames
         self.columns = columns
@@ -28,7 +28,8 @@ class TextureAtlas:
         # If we have already loaded this texture into the gpu then there's no need to load it again
         if file_path not in self.all_textures:
             image = Image.open(file_path)
-            image = image.transpose(Image.FLIP_TOP_BOTTOM)
+            if flip:
+                image = image.transpose(Image.FLIP_TOP_BOTTOM)
 
             image_data = image.convert("RGBA").tobytes()
             self.gen_texture(image_data, image.width, image.height)

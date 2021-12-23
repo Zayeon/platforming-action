@@ -6,8 +6,12 @@ from engine.opengl.Quad import Quad
 from engine.opengl.ConvexPolygon import ConvexPolygon
 from engine.opengl.MainRenderer import MainRenderer
 from engine.opengl.Camera import Camera
+
 from engine.physics.ConvexPolygonHitbox import ConvexPolygonHitbox
 from engine.physics.InteractionWorld import InteractionWorld
+
+from engine.UI.FontType import FontType
+from engine.UI.UIRenderer import UIRenderer
 
 from OpenGL.GL import *
 import pyrr
@@ -20,6 +24,8 @@ def main():
 
     display_manager = DisplayManager()
     display_manager.create_window(1280, 720, "Untitled Platformer")
+
+    projection_matrix = pyrr.matrix44.create_orthogonal_projection(-16, 16, -9, 9, 0, 100)
 
     # Test OpenGL
     vertex_data = [
@@ -66,7 +72,9 @@ def main():
     world.add_polygon(polygon_a_hitbox)
     world.add_polygon(polygon_b_hitbox)
 
-    main_renderer = MainRenderer()
+    main_renderer = MainRenderer(projection_matrix)
+    UI_renderer = UIRenderer()
+    UI_renderer.set_projection_matrix(projection_matrix)
     camera = Camera()
 
     # Bind right arrow to advancing frame
@@ -75,6 +83,9 @@ def main():
     #     example_quad.set_tex_coords(troll_despair.get_tex_coords())
     #
     # display_manager.bind_key_down(glfw.KEY_RIGHT, on_right_arrow_press)
+
+    font_8bit = FontType("8BitOperator", display_manager.width / display_manager.height)
+    text_1 = font_8bit.construct_text("Hello World!", 10, [0, 0, 0.7])
 
     glClearColor(1.0, 1.0, 1.0, 1.0)
     while not display_manager.window_should_close():
@@ -108,13 +119,14 @@ def main():
             reaction = world.react_to_movement(polygon_a_hitbox, proposed_movement)
             polygon_a_position -= reaction
             polygon_a.set_position(polygon_a_position[0], polygon_a_position[1])
-        if len(world.intersect_convex_polygon(polygon_a_hitbox, polygon_b_hitbox)) <= 0:
-            polygon_a.colour = [201/255, 241/255, 255/255, 1]
-        else:
-            polygon_a.colour = [224/255, 187/255, 228/255, 1]
+        # if len(world.intersect_convex_polygon(polygon_a_hitbox, polygon_b_hitbox)) <= 0:
+        #     polygon_a.colour = [201/255, 241/255, 255/255, 1]
+        # else:
+        #     polygon_a.colour = [224/255, 187/255, 228/255, 1]
 
 
         main_renderer.render([], [polygon_b, polygon_a], camera)
+        UI_renderer.render([text_1], font_8bit)
 
         dink_donk.next_frame()
         dink_quad.set_tex_coords(dink_donk.get_tex_coords())

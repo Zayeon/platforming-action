@@ -4,8 +4,8 @@ from engine.opengl.ConvexPolygonRenderer import ConvexPolygonRenderer
 import pyrr
 
 class MainRenderer:
-    def __init__(self):
-        self.projection_matrix = pyrr.matrix44.create_orthogonal_projection(-16, 16, -9, 9, 0, 100)
+    def __init__(self, projection_matrix):
+        self.projection_matrix = projection_matrix  # pyrr.matrix44.create_orthogonal_projection(-16, 16, -9, 9, 0, 100)
 
         self.quad_renderer = QuadRenderer()
         self.quad_renderer.set_projection_matrix(self.projection_matrix)
