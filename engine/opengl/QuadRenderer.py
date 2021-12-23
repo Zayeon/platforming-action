@@ -32,13 +32,13 @@ class QuadRenderer:
         return sorted_quads
 
     def render_quad(self, quad):
+        quad.vao.bind()
         glEnableVertexAttribArray(0)
         glEnableVertexAttribArray(1)
         translation = pyrr.matrix44.create_from_translation(quad.position)
         model_matrix = np.matmul(quad.scale, np.matmul(quad.rotation, translation))
         self.quad_shader.set_uniform_mat4fv("model_matrix", model_matrix)
 
-        quad.vao.bind()
         glDrawElements(GL_TRIANGLES, quad.vao.get_vertex_count(), GL_UNSIGNED_BYTE, None)
         quad.vao.unbind()
 

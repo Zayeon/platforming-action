@@ -6,6 +6,8 @@ from engine.opengl.Quad import Quad
 from engine.opengl.ConvexPolygon import ConvexPolygon
 from engine.opengl.MainRenderer import MainRenderer
 from engine.opengl.Camera import Camera
+from engine.physics.ConvexPolygonHitbox import ConvexPolygonHitbox
+from engine.physics.InteractionWorld import InteractionWorld
 
 from OpenGL.GL import *
 import pyrr
@@ -45,13 +47,24 @@ def main():
     jerma_quad.set_scale(5, 5)
 
     polygon_a_vertices = [[0, 1, 0], [-0.95, 0.31, 0], [-0.59, -0.81, 0], [0.59, -0.81, 0], [0.95, 0.31, 0]]
+    polygon_a_position = np.array([-1, 0], dtype=np.float32)
+    polygon_a_rotation = 0
     polygon_a = ConvexPolygon(polygon_a_vertices, [224/255, 187/255, 228/255, 1])
-    polygon_a.set_position(-2, 0)
-    polygon_a.set_rotation(18)
+    polygon_a.set_position(polygon_a_position[0], polygon_a_position[1])
+    polygon_a.set_rotation(polygon_a_rotation)
+    polygon_a_hitbox = ConvexPolygonHitbox(polygon_a_vertices, polygon_a_position, polygon_a_rotation)
+
     polygon_b_vertices = [[-0.5, 0.87, 0], [-1, 0, 0], [-0.5, -0.87, 0], [0.5, -0.87, 0], [1, 0, 0], [0.5, 0.87, 0]]
-    polygon_b = ConvexPolygon(polygon_b_vertices, [149 / 255, 125 / 255, 173 / 255, 1])
-    polygon_b.set_position(2, 0)
-    polygon_b.set_rotation(0)
+    polygon_b_position = np.array([2, 0], dtype=np.float32)
+    polygon_b_rotation = 30
+    polygon_b = ConvexPolygon(polygon_b_vertices, [197/255, 217/255, 252/255, 1])
+    polygon_b.set_position(polygon_b_position[0], polygon_b_position[1])
+    polygon_b.set_rotation(polygon_b_rotation)
+    polygon_b_hitbox = ConvexPolygonHitbox(polygon_b_vertices, polygon_b_position, polygon_b_rotation)
+
+    world = InteractionWorld()
+    world.add_polygon(polygon_a_hitbox)
+    world.add_polygon(polygon_b_hitbox)
 
     main_renderer = MainRenderer()
     camera = Camera()
@@ -67,15 +80,48 @@ def main():
     while not display_manager.window_should_close():
         display_manager.start_frame()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glDepthFunc(GL_LEQUAL)
+        glEnable(GL_DEPTH_TEST)
 
-        main_renderer.render([], [polygon_a, polygon_b], camera)
+        proposed_movement = np.zeros(2)
+        if display_manager.get_key_state(glfw.KEY_UP) == glfw.PRESS:
+            proposed_movement[1] = 0.05
+            polygon_a_position += proposed_movement
+            reaction = world.react_to_movement(polygon_a_hitbox, proposed_movement)
+            polygon_a_position -= reaction
+            polygon_a.set_position(polygon_a_position[0], polygon_a_position[1])
+        elif display_manager.get_key_state(glfw.KEY_DOWN) == glfw.PRESS:
+            proposed_movement[1] = -0.05
+            polygon_a_position += proposed_movement
+            reaction = world.react_to_movement(polygon_a_hitbox, proposed_movement)
+            polygon_a_position -= reaction
+            polygon_a.set_position(polygon_a_position[0], polygon_a_position[1])
+        elif display_manager.get_key_state(glfw.KEY_LEFT) == glfw.PRESS:
+            proposed_movement[0] = -0.05
+            polygon_a_position += proposed_movement
+            reaction = world.react_to_movement(polygon_a_hitbox, proposed_movement)
+            polygon_a_position -= reaction
+            polygon_a.set_position(polygon_a_position[0], polygon_a_position[1])
+        elif display_manager.get_key_state(glfw.KEY_RIGHT) == glfw.PRESS:
+            proposed_movement[0] = 0.05
+            polygon_a_position += proposed_movement
+            reaction = world.react_to_movement(polygon_a_hitbox, proposed_movement)
+            polygon_a_position -= reaction
+            polygon_a.set_position(polygon_a_position[0], polygon_a_position[1])
+        if len(world.intersect_convex_polygon(polygon_a_hitbox, polygon_b_hitbox)) <= 0:
+            polygon_a.colour = [201/255, 241/255, 255/255, 1]
+        else:
+            polygon_a.colour = [224/255, 187/255, 228/255, 1]
 
-        # dink_donk.next_frame()
-        # dink_quad.set_tex_coords(dink_donk.get_tex_coords())
-        # troll_despair.next_frame()
-        # troll_quad.set_tex_coords(troll_despair.get_tex_coords())
-        # jerma_texture.next_frame()
-        # jerma_quad.set_tex_coords(jerma_texture.get_tex_coords())
+
+        main_renderer.render([], [polygon_b, polygon_a], camera)
+
+        dink_donk.next_frame()
+        dink_quad.set_tex_coords(dink_donk.get_tex_coords())
+        troll_despair.next_frame()
+        troll_quad.set_tex_coords(troll_despair.get_tex_coords())
+        jerma_texture.next_frame()
+        jerma_quad.set_tex_coords(jerma_texture.get_tex_coords())
 
         display_manager.update_display()
 

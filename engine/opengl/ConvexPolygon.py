@@ -10,7 +10,7 @@ class ConvexPolygon:
         vertex_data = np.concatenate(positions)
         indices = self.generate_indices(len(positions))
         self.colour = colour
-        self.position = pyrr.Vector3([0, 0, 0])
+        self.position = pyrr.Vector3([0, 0, 0], dtype=np.float32)
         self.rotation = pyrr.matrix44.create_from_z_rotation(radians(0))
         self.scale = pyrr.matrix44.create_from_scale(np.array([1, 1, 1]))
 
@@ -37,8 +37,8 @@ class ConvexPolygon:
         return indices
 
     def set_position(self, x, y):
-        self.position[0] = x
-        self.position[1] = y
+        self.position.x = x
+        self.position.y = y
 
     def set_rotation(self, rotation):
         self.rotation = pyrr.matrix44.create_from_z_rotation(radians(rotation))
