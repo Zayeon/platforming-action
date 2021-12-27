@@ -84,3 +84,6 @@ class InteractionWorld:
         d = -d1[0] * d2[1] + d1[1] * d2[0]
         t = np.matmul(m, o) / d
         return t
+
+    def ray_intersect_box(self):
+        pass
