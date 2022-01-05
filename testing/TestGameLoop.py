@@ -1,9 +1,7 @@
 from engine.GLFWDisplayManager import DisplayManager
-from engine.opengl.GLSLShader import GLSLShader
 from engine.opengl.GLTextureAtlas import TextureAtlas
-from engine.opengl.VAO import VAO
-from engine.opengl.Quad import Quad
-from engine.opengl.ConvexPolygon import ConvexPolygon
+from engine.opengl.objects.Quad import Quad
+from engine.opengl.objects.ConvexPolygon import ConvexPolygon
 from engine.opengl.MainRenderer import MainRenderer
 from engine.opengl.Camera import Camera
 
@@ -18,7 +16,7 @@ import pyrr
 import numpy as np
 import glfw
 import os.path
-from math import radians
+
 
 def main():
 

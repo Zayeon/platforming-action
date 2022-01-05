@@ -7,17 +7,13 @@ from engine.opengl.GLSLShader import GLSLShader
 
 class QuadRenderer:
     def __init__(self):
-        self.quad_shader_path = os.path.join("engine", "opengl", "shaders", "quad_shader.txt")
-        self.quad_shader = None
+        quad_shader_path = os.path.join("engine", "opengl", "shaders", "quad_shader.txt")
+        self.quad_shader = GLSLShader(quad_shader_path)
 
-        self.load_shader()
 
     def set_projection_matrix(self, matrix):
         self.quad_shader.bind()
         self.quad_shader.set_uniform_mat4fv("projection_matrix", matrix)
-
-    def load_shader(self):
-        self.quad_shader = GLSLShader(self.quad_shader_path)
 
     def sort_quads_by_texture(self, quads):
         # Organise quads by texture so that we only have to bind each texture once

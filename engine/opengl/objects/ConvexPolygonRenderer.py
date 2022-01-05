@@ -8,8 +8,8 @@ from engine.opengl.GLSLShader import GLSLShader
 
 class ConvexPolygonRenderer:
     def __init__(self):
-        self.convex_polygon_shader_path = os.path.join("engine", "opengl", "shaders", "convex_polygon_shader.txt")
-        self.convex_polygon_shader = GLSLShader(self.convex_polygon_shader_path)
+        convex_polygon_shader_path = os.path.join("engine", "opengl", "shaders", "convex_polygon_shader.txt")
+        self.convex_polygon_shader = GLSLShader(convex_polygon_shader_path)
 
     def set_projection_matrix(self, matrix):
         self.convex_polygon_shader.bind()

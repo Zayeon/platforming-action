@@ -1,7 +1,6 @@
-from engine.opengl.QuadRenderer import QuadRenderer
-from engine.opengl.ConvexPolygonRenderer import ConvexPolygonRenderer
+from engine.opengl.objects.QuadRenderer import QuadRenderer
+from engine.opengl.objects.ConvexPolygonRenderer import ConvexPolygonRenderer
 
-import pyrr
 
 class MainRenderer:
     def __init__(self, projection_matrix):

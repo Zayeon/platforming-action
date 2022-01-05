@@ -1,25 +1,14 @@
 from engine.GLFWDisplayManager import DisplayManager
-from engine.opengl.GLSLShader import GLSLShader
-from engine.opengl.GLTextureAtlas import TextureAtlas
-from engine.opengl.VAO import VAO
-from engine.opengl.Quad import Quad
-from engine.opengl.ConvexPolygon import ConvexPolygon
 from engine.opengl.MainRenderer import MainRenderer
 from engine.opengl.Camera import Camera
 
-from engine.physics.ConvexPolygonHitbox import ConvexPolygonHitbox
 from engine.physics.InteractionWorld import InteractionWorld
 from engine.physics.AABB import AABB
-
-from engine.UI.FontType import FontType
-from engine.UI.UIRenderer import UIRenderer
 
 from OpenGL.GL import *
 import pyrr
 import numpy as np
-import glfw
-import os.path
-from math import radians
+
 
 def main():
 
