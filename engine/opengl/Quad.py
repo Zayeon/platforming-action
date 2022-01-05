@@ -7,12 +7,19 @@ class Quad:
     indices = [0, 1, 2,
                0, 2, 3]
 
-    def __init__(self, positions, texture_atlas):
+    vertex_data = [
+        -0.5, -0.5, 0.0,
+        -0.5, 0.5, 0.0,
+        0.5, 0.5, 0.0,
+        0.5, -0.5, 0.0,
+    ]
+
+    def __init__(self, texture_atlas):
         self.position = pyrr.Vector3([0, 0, 0])
         self.rotation = pyrr.matrix44.create_from_z_rotation(radians(0))
         self.scale = pyrr.matrix44.create_from_scale(np.array([1, 1, 1]))
         self.vao = VAO(len(self.indices))
-        self.set_positions(positions)
+        self.set_positions(self.vertex_data)
 
         # set the default indices
         self.set_indices(self.indices)

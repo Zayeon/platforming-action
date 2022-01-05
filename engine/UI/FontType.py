@@ -30,7 +30,7 @@ class FontType:
                     character.normalise(aspect_ratio)
                     self.character_table[character.ID] = character
 
-    def construct_text(self, text, scale, colour, line_spacing=1):
+    def construct_text(self, text, scale, colour, line_spacing=1, char_spacing=0):
         vertices = []
         texture_coords = []
         indices = np.array([], dtype=np.uint8)  # may be too small
@@ -40,7 +40,10 @@ class FontType:
             cursor = 0
             line_offset = line_no * line_spacing
             for char_no, char in enumerate(line):
-                char_info = self.character_table[ord(char)]
+                char_id = ord(char)
+                if char_id not in self.character_table:
+                    char_id = 0
+                char_info = self.character_table[char_id]
                 char_vertex_data = [
                     cursor + char_info.norm_x_offset, -char_info.norm_y_offset - line_offset,
                     cursor + char_info.norm_x_offset + char_info.norm_width_AR, -char_info.norm_y_offset - line_offset,
@@ -56,7 +59,7 @@ class FontType:
                     char_info.norm_x, char_info.norm_y + char_info.norm_height,
                 ]
                 texture_coords.extend(char_tex_coords)
-                cursor += char_info.norm_x_advance
+                cursor += char_info.norm_x_advance + char_spacing
                 new_indices = self.quad_indices + 4 * char_counter
                 indices = np.append(indices, new_indices)
                 char_counter += 1
@@ -68,9 +71,9 @@ class FontType:
         height = vertices[1::2].min()
 
         text_vao = VAO(len(indices))
+        text_vao.bind_indices_buffer(indices)
         text_vao.store_data_in_attribute_list(0, 2, vertices)
         text_vao.store_data_in_attribute_list(1, 2, texture_coords)
-        text_vao.bind_indices_buffer(indices)
 
         return text_vao
 

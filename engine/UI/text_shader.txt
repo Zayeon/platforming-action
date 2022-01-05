@@ -24,7 +24,20 @@ out vec4 out_colour;
 uniform vec3 colour;
 uniform sampler2D font_bitmap;
 
+const float width = 0.5;
+const float edge = 0.1;
+
+float smoothly_step(float edge0, float edge1, float x){
+    float t = clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
+    return t * t * (3.0 - 2.0 * t);
+}
+
 void main() {
-    out_colour = vec4(colour, texture(font_bitmap, texture_coord).a);
+    float distance = 1.0 - texture(font_bitmap, texture_coord).a;
+    float alpha = 1.0 - smoothly_step(width, width + edge, distance);
+
+
+    out_colour = vec4(colour, alpha);
+
 }
 

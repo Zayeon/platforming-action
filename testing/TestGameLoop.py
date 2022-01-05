@@ -28,12 +28,6 @@ def main():
     projection_matrix = pyrr.matrix44.create_orthogonal_projection(-16, 16, -9, 9, 0, 100)
 
     # Test OpenGL
-    vertex_data = [
-        -0.5, -0.5, 0.0,
-        -0.5, 0.5, 0.0,
-        0.5, 0.5, 0.0,
-        0.5, -0.5, 0.0,
-    ]
 
     texture_path = os.path.join("res", "jerma_sus.jpg")
     jerma_texture = TextureAtlas(texture_path, 1, 1, 360, 450)
@@ -42,13 +36,13 @@ def main():
     texture_path = os.path.join("res", "dink_donk.png")
     dink_donk = TextureAtlas(texture_path, 3, 3, 128, 128)
 
-    dink_quad = Quad(vertex_data, dink_donk)
+    dink_quad = Quad(dink_donk)
     dink_quad.set_position(-5, 0)
     dink_quad.set_scale(5, 5)
-    troll_quad = Quad(vertex_data, troll_despair)
+    troll_quad = Quad(troll_despair)
     troll_quad.set_position(0, 0)
     troll_quad.set_scale(5, 5)
-    jerma_quad = Quad(vertex_data, jerma_texture)
+    jerma_quad = Quad(jerma_texture)
     jerma_quad.set_position(5, 0)
     jerma_quad.set_scale(5, 5)
 
@@ -85,7 +79,7 @@ def main():
     # display_manager.bind_key_down(glfw.KEY_RIGHT, on_right_arrow_press)
 
     font_8bit = FontType("8BitOperator", display_manager.width / display_manager.height)
-    text_1 = font_8bit.construct_text("Hello World!", 10, [0, 0, 0.7])
+    text_1 = font_8bit.construct_text("Hello\nWorld!", 10, [0, 0, 0.7], line_spacing=0.2, char_spacing=-0.01)
 
     glClearColor(1.0, 1.0, 1.0, 1.0)
     while not display_manager.window_should_close():
