@@ -1,0 +1,25 @@
+##VERTEX
+#version 330 core
+
+layout(location = 0) in vec2 vertex;
+
+uniform mat4 projection_matrix;
+uniform mat4 view_matrix;
+uniform mat4 model_matrix;
+uniform float width;
+
+void main() {
+    //gl_Width = width;
+    gl_Position = projection_matrix * view_matrix * vec4(vertex, 0.0, 1.0);
+}
+
+##FRAGMENT
+#version 330 core
+
+uniform vec4 colour_input;
+
+out vec4 colour;
+
+void main() {
+    colour = colour_input;
+}

@@ -28,10 +28,6 @@ class Rect:
         float_positions = np.array(positions, dtype=np.float32)
         self.vao.store_data_in_attribute_list(0, 3, float_positions)
 
-    def set_tex_coords(self, tex_coords):
-        float_tex_coords = np.array(tex_coords, dtype=np.float32)
-        self.vao.store_data_in_attribute_list(1, 2, float_tex_coords)
-
     def set_indices(self, indices):
         uint_indices = np.array(indices, dtype=np.uint8)
         self.vao.bind_indices_buffer(uint_indices)

@@ -86,3 +86,7 @@ class GLSLShader:
     def set_uniform_mat4fv(self, uniform_name, matrix):
         location = self.get_uniform_location(uniform_name)
         glUniformMatrix4fv(location, 1, GL_FALSE, matrix)
+
+    def set_uniform1f(self, uniform_name, v):
+        location = self.get_uniform_location(uniform_name)
+        glUniform1f(location, v)

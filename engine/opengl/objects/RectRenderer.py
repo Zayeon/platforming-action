@@ -28,3 +28,9 @@ class RectRenderer:
             # Render rects
             rect.vao.bind()
             glEnableVertexAttribArray(0)
+            glDrawElements(GL_TRIANGLES, rect.vao.get_vertex_count(), GL_UNSIGNED_BYTE, None)
+            rect.vao.unbind()
+
+        # Clean up
+        glDisableVertexAttribArray(0)
+        self.rect_shader.unbind()
