@@ -10,6 +10,7 @@ from engine.physics.AABB import AABB
 from OpenGL.GL import *
 import pyrr
 import numpy as np
+import glfw
 
 
 def main():
@@ -33,27 +34,40 @@ def main():
         pos = pos * proj
         return pos
 
+    rects = []
+
     box1_pos = np.array([0, 1])
     box1_size = np.array([2, 2])
-    box1_vel = np.array([1.1, -3.1])
     box = AABB(box1_pos, box1_size)
-    box.set_velocity(box1_vel)
-    rect = Rect(box1_pos, box1_size, (0, 0, 0.5, 1))
+    rect = Rect(box1_pos, box1_size, (0, 0.5, 0.5, 1))
+    rects.append(rect)
 
-    box2_pos = np.array([1, -2])
-    box2_size = np.array([2, 1])
-    box2 = AABB(box2_pos, box2_size)
-    rect2 = Rect(box2_pos, box2_size, (0, 0, 0.5, 1))
+    def gen_box_rect(pos, size):
+        world.add_box(AABB(pos, size))
+        rects.append(Rect(pos, size, np.random.random(4)))
 
-    v1 = box1_pos + box1_size / 2
-    v2 = v1 + box1_vel
-    line = Line([*v1,  *v2], (0, 0.5, 0, 1), 5)
+    gen_box_rect([1, -2], [2, 1])
+    gen_box_rect([-15, -8], [0.5, 10])
+    gen_box_rect([-14.5, -8], [2, 2])
+    gen_box_rect([-12.5, -8], [2, 2])
+    gen_box_rect([-10.5, -8], [2, 2])
+    gen_box_rect([-8.5, -8], [2, 2])
+    gen_box_rect([-6.5, -8], [2, 2])
+    gen_box_rect([-4.5, -8], [2, 2])
+    gen_box_rect([-2.5, -8], [17.5, 2])
+    gen_box_rect([15, -8], [0.5, 10])
+    gen_box_rect([-14, -5], [0.5, 0.5])
 
-    intersect = world.dynamic_rect_intersect_rect(box, 1, box2)
-    if intersect:
-        t_hit, contact_point, contact_normal = intersect
-        box.position = contact_point
-        rect.set_position(contact_point)
+    # v1 = box1_pos + box1_size / 2
+    # v2 = v1 + box1_vel
+    # line = Line([*v1,  *v2], (0, 0.5, 0, 1), 5)
+
+    gravity = np.array((0, -10), dtype=np.float32)
+
+    def on_space_down():
+        box.velocity[1] = 4
+
+    display_manager.bind_key_down(glfw.KEY_SPACE, on_space_down)
 
     main_renderer = MainRenderer(projection_matrix)
     camera = Camera()
@@ -66,10 +80,23 @@ def main():
         glEnable(GL_DEPTH_TEST)
         cursor_pos = window_to_projection(display_manager.get_cursor_pos(), [16, 9])
 
+        if display_manager.get_key_state(glfw.KEY_A):
+            box.velocity[0] = -5
+        elif display_manager.get_key_state(glfw.KEY_D):
+            box.velocity[0] = 5
+        else:
+            box.velocity[0] = 0
+
+        box.velocity += gravity * display_manager.delta_time
+
         # moving box
+        world.resolve_movement(box, display_manager.delta_time)
+
+        box.position += display_manager.delta_time * box.velocity
+        rect.set_position(box.position)
 
 
-        main_renderer.render([], [], [rect, rect2], [line], camera)
+        main_renderer.render([], [], rects, [], camera)
 
         display_manager.update_display()
 

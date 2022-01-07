@@ -1,15 +1,20 @@
 import numpy as np
 from math import radians, cos, sin
 
+import warnings
+
 from engine.physics.AABB import AABB
 
 class InteractionWorld:
     def __init__(self):
         self.convex_polygons = []
-        self.aabbs = []
+        self.boxes = []
 
     def add_polygon(self, polygon):
         self.convex_polygons.append(polygon)
+
+    def add_box(self, box):
+        self.boxes.append(box)
 
     # def react_to_movement(self, polygon_a, proposed_movement):
     #     reaction = np.array([0, 0], dtype=np.float32)
@@ -86,13 +91,17 @@ class InteractionWorld:
 
     # Source: https://github.com/OneLoneCoder/olcPixelGameEngine/blob/master/Videos/OneLoneCoder_PGE_Rectangles.cpp
     def ray_intersect_rect(self, ray_origin, ray_dir, target):
-        # TODO: resolve this case
-        if ray_dir[0] == 0 or ray_dir[1] == 0:
-            return
 
-        # Calculate intersections with AABB axes
-        t_near = (target.position - ray_origin) / ray_dir
-        t_far = (target.position + target.size - ray_origin) / ray_dir
+        # Divide by 0 is ok just suppress warning
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+
+            # Calculate intersections with AABB axes
+            t_near = (target.position - ray_origin) / ray_dir
+            t_far = (target.position + target.size - ray_origin) / ray_dir
+
+        if np.isnan(t_near[0]) or np.isnan(t_near[1]) or np.isnan(t_far[0]) or np.isnan(t_far[1]):
+            return
 
         # Swap near and far if near > far
         if t_near[0] > t_far[0]:
@@ -135,10 +144,33 @@ class InteractionWorld:
             return
 
         # Expand target rectangle by source dimensions
-        pos = r_dynamic.position - r_dynamic.size / 2
+        pos = r_static.position - r_dynamic.size / 2
         size = r_static.size + r_dynamic.size
         expanded_target = AABB(pos, size)
 
-        intersect = self.ray_intersect_rect(r_dynamic.position + r_dynamic.size / 2, r_dynamic.velocity * frame_time, r_static)
+        intersect = self.ray_intersect_rect(r_dynamic.position + r_dynamic.size / 2, r_dynamic.velocity * frame_time, expanded_target)
         if intersect and 0 <= intersect[0] <= 1:
             return intersect
+
+    # Resolve dynamic rect intersect rect
+    # def resolve_DRIR(self, r_dynamic, frame_time, r_static):
+    #     intersect = self.dynamic_rect_intersect_rect(r_dynamic, frame_time, r_static)
+    #     if intersect:
+    #         t_hit, contact_point, contact_normal = intersect
+    #         r_dynamic.velocity += contact_normal * np.abs(r_dynamic.velocity) * (1-t_hit)
+
+    def resolve_movement(self, r_dynamic, frame_time):
+        collisions = []
+
+        # Work out collision with each box, add it to list along with rect id
+        for i, r_static in enumerate(self.boxes):
+            intersect = self.dynamic_rect_intersect_rect(r_dynamic, frame_time, r_static)
+            if intersect:
+                collisions.append(intersect)
+
+        # Sort the collisions by time of intersection
+        collisions.sort(key=lambda x: x[0])
+
+        for intersect in collisions:
+            t_hit, contact_point, contact_normal = intersect
+            r_dynamic.velocity += contact_normal * np.abs(r_dynamic.velocity) * (1-t_hit)
