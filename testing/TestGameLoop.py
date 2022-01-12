@@ -117,7 +117,7 @@ def main():
         #     polygon_a.colour = [224/255, 187/255, 228/255, 1]
 
 
-        main_renderer.render([], [polygon_b, polygon_a], camera)
+        main_renderer.render([dink_quad, troll_quad, jerma_quad], [], [], [], camera)
         UI_renderer.render([text_1], font_8bit)
 
         dink_donk.next_frame()

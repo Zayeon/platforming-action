@@ -56,7 +56,7 @@ def main():
     gen_box_rect([-4.5, -8], [2, 2])
     gen_box_rect([-2.5, -8], [17.5, 2])
     gen_box_rect([15, -8], [0.5, 10])
-    gen_box_rect([-14, -5], [0.5, 0.5])
+    gen_box_rect([-14, -4], [0.5, 0.5])
 
     # v1 = box1_pos + box1_size / 2
     # v2 = v1 + box1_vel
