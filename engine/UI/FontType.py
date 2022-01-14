@@ -30,7 +30,7 @@ class FontType:
                     character.normalise(aspect_ratio)
                     self.character_table[character.ID] = character
 
-    def construct_text(self, text, scale, colour, line_spacing=1, char_spacing=0):
+    def construct_text(self, text, line_spacing=1, char_spacing=0):
         vertices = []
         texture_coords = []
         indices = np.array([], dtype=np.uint8)  # may be too small
@@ -75,7 +75,7 @@ class FontType:
         text_vao.store_data_in_attribute_list(0, 2, vertices)
         text_vao.store_data_in_attribute_list(1, 2, texture_coords)
 
-        return text_vao
+        return text_vao, width, height
 
 
 class Character:

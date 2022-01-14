@@ -26,7 +26,7 @@ class DisplayManager:
         self.height = height
         self.title = title
 
-        glfw.window_hint(glfw.RESIZABLE, False)
+        glfw.window_hint(glfw.RESIZABLE, True)
         glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
         glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
         glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
@@ -35,6 +35,7 @@ class DisplayManager:
         glfw.make_context_current(self.window_ID)
 
         glfw.set_key_callback(self.window_ID, self.key_callback)
+        glfw.set_window_size_callback(self.window_ID, self.window_resize_callback)
 
         self.last_frame = glfw.get_time()
 
@@ -44,6 +45,11 @@ class DisplayManager:
 
     def error_callback(self, error, description):
         print("Error: " + description)
+
+    def window_resize_callback(self, window, width, height):
+        self.width = width
+        self.height = height
+        glViewport(0, 0, self.width, self.height)
 
     def key_callback(self, window, key, scancode, action, mods):
         if key == glfw.KEY_F11 and action == glfw.PRESS:
