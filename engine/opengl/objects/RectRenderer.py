@@ -15,6 +15,8 @@ class RectRenderer:
         self.rect_shader.set_uniform_mat4fv("projection_matrix", matrix)
 
     def render(self, rects, camera):
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         view_matrix = pyrr.matrix44.create_from_translation(-camera.get_position())
         self.rect_shader.bind()
         self.rect_shader.set_uniform_mat4fv("view_matrix", view_matrix)
@@ -34,3 +36,4 @@ class RectRenderer:
         # Clean up
         glDisableVertexAttribArray(0)
         self.rect_shader.unbind()
+        glDisable(GL_BLEND)

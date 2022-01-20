@@ -17,13 +17,13 @@ class UIElement:
         self.elements.append(element)
         element.parent = self
 
-    def calculate_pos_dims(self):
+    def calculate_pos_dims(self, window_width, window_height):
         # This is the root element and takes up the whole screen
         if self.parent is None:
             self.x = 0
             self.y = 0
-            self.width = 1
-            self.height = 1
+            self.width = window_width
+            self.height = window_height
 
         else:
             # Impossible to have height and width be aspect constraints
@@ -31,12 +31,12 @@ class UIElement:
                 return
 
             # Check cases for absolute and relative constraints for width and height before aspect constraints
-            if self.constraints.width[0] == UIConstraints.ABSOLUTE_CONSTRAINT:
+            if self.constraints.width[0] == UIConstraints.PIXEL_CONSTRAINT:
                 self.width = self.constraints.width[1]
             elif self.constraints.width[0] == UIConstraints.RELATIVE_CONSTRAINT:
                 self.width = self.parent.width * self.constraints.width[1]
 
-            if self.constraints.height[0] == UIConstraints.ABSOLUTE_CONSTRAINT:
+            if self.constraints.height[0] == UIConstraints.PIXEL_CONSTRAINT:
                 self.height = self.constraints.height[1]
             elif self.constraints.height[0] == UIConstraints.RELATIVE_CONSTRAINT:
                 self.height = self.parent.height * self.constraints.height[1]
@@ -49,7 +49,7 @@ class UIElement:
                 self.height = self.width * self.constraints.height[1]
 
             # Calculate x constraints
-            if self.constraints.x[0] == UIConstraints.ABSOLUTE_CONSTRAINT:
+            if self.constraints.x[0] == UIConstraints.PIXEL_CONSTRAINT:
                 self.x = self.parent.x + self.constraints.x[1]
             elif self.constraints.x[0] == UIConstraints.RELATIVE_CONSTRAINT:
                 self.x = self.parent.x + self.parent.width * self.constraints.x[1]
@@ -57,7 +57,7 @@ class UIElement:
                 self.x = self.parent.x + self.parent.width / 2 - self.width / 2
 
             # Calculate y constraints
-            if self.constraints.y[0] == UIConstraints.ABSOLUTE_CONSTRAINT:
+            if self.constraints.y[0] == UIConstraints.PIXEL_CONSTRAINT:
                 self.y = self.parent.y + self.constraints.y[1]
             elif self.constraints.y[0] == UIConstraints.RELATIVE_CONSTRAINT:
                 self.y = self.parent.y + self.parent.height * self.constraints.y[1]
@@ -66,4 +66,4 @@ class UIElement:
 
         # Calculate position and dimensions for child elements as well
         for element in self.elements:
-            element.calculate_pos_dims()
+            element.calculate_pos_dims(window_width, window_height)

@@ -90,3 +90,12 @@ class GLSLShader:
     def set_uniform1f(self, uniform_name, v):
         location = self.get_uniform_location(uniform_name)
         glUniform1f(location, v)
+
+    def set_uniform2f(self, uniform_name, v1, v2):
+        location = self.get_uniform_location(uniform_name)
+        glUniform2f(location, v1, v2)
+
+    def set_uniform3f(self, uniform_name, v1, v2, v3):
+        location = self.get_uniform_location(uniform_name)
+        glUniform3f(location, v1, v2, v3)
+

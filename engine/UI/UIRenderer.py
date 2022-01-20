@@ -1,55 +1,45 @@
 import os.path
+
+import numpy as np
 import pyrr
 from OpenGL.GL import *
 
+from engine.UI.UILabel import UILabel
+from engine.UI.UIRect import UIRect
 from engine.opengl.GLSLShader import GLSLShader
 
 
 class UIRenderer:
 
-    # def sort_quads_by_texture(self, quads):
-    #     # Organise quads by texture so that we only have to bind each texture once
-    #     sorted_quads = {}
-    #     for quad in quads:
-    #         texture_ID = quad.texture_atlas.get_ID()
-    #         if texture_ID not in sorted_quads:
-    #             sorted_quads[texture_ID] = []
-    #
-    #         sorted_quads[texture_ID].append(quad)
-    #
-    #     return sorted_quads
-
-
-
     def __init__(self):
         text_shader_path = os.path.join("engine", "UI", "text_shader.txt")
         self.text_shader = GLSLShader(text_shader_path)
+        rect_shader_path = os.path.join("engine", "UI", "rect_shader.txt")
+        self.rect_shader = GLSLShader(rect_shader_path)
 
-    def set_projection_matrix(self, matrix):
+    def set_projection_matrix(self, window_width, window_height):
+        matrix = pyrr.matrix44.create_orthogonal_projection(0, window_width, window_height, 0, 0, 100)
         self.text_shader.bind()
         self.text_shader.set_uniform_mat4fv("projection_matrix", matrix)
+        self.rect_shader.bind()
+        self.rect_shader.set_uniform_mat4fv("projection_matrix", matrix)
 
-    # def sort_text_by_font(self, texts):
-    #     # Organise texts by font so that we only have to bind each texture once
-    #     sorted_texts = {}
-    #     for text in texts:
-    #         font_bitmap_ID = text.
-
-    def render(self, texts, font):
+    def render_label(self, label):
+        # TODO: Please optimise this, setup happens for every label in the ui
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glDisable(GL_DEPTH_TEST)
 
         self.text_shader.bind()
-        self.text_shader.set_uniform_mat4fv("model_matrix", pyrr.matrix44.create_from_scale([10, 5, 1]))
-        glBindTexture(GL_TEXTURE_2D, font.font_bitmap.get_ID())
+        self.text_shader.set_uniform_mat4fv("model_matrix", pyrr.matrix44.create_from_scale([100, 50, 1]))
+        self.text_shader.set_uniform3f("colour", *label.text_colour)
+        glBindTexture(GL_TEXTURE_2D, label.font.font_bitmap.get_ID())
 
-        for text_vao in texts:
-            text_vao.bind()
-            glEnableVertexAttribArray(0)
-            glEnableVertexAttribArray(1)
-            glDrawElements(GL_TRIANGLES, text_vao.get_vertex_count(), GL_UNSIGNED_BYTE, None)
-            text_vao.unbind()
+        label.text_vao.bind()
+        glEnableVertexAttribArray(0)
+        glEnableVertexAttribArray(1)
+        glDrawElements(GL_TRIANGLES, label.text_vao.get_vertex_count(), GL_UNSIGNED_BYTE, None)
+        label.text_vao.unbind()
 
         # Clean up
         glDisableVertexAttribArray(0)
@@ -57,3 +47,25 @@ class UIRenderer:
         glBindTexture(GL_TEXTURE_2D, 0)
         self.text_shader.unbind()
         glDisable(GL_BLEND)
+
+    def render_rect(self, rect):
+        # Render rect
+        self.rect_shader.bind()
+        self.rect_shader.set_uniform4f("colour_input", *rect.colour)
+        rect.vao.bind()
+        glEnableVertexAttribArray(0)
+        glDrawElements(GL_TRIANGLES, rect.vao.get_vertex_count(), GL_UNSIGNED_BYTE, None)
+        rect.vao.unbind()
+
+        # Clean up
+        glDisableVertexAttribArray(0)
+        self.rect_shader.unbind()
+
+    def render(self, ui):
+        if isinstance(ui, UILabel):
+            self.render_label(ui)
+        if isinstance(ui, UIRect):
+            self.render_rect(ui)
+
+        for element in ui.elements:
+            self.render(element)

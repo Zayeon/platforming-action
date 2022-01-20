@@ -2,7 +2,7 @@
 
 class UIConstraints:
     # Constraints
-    ABSOLUTE_CONSTRAINT = 0
+    PIXEL_CONSTRAINT = 0
     CENTRE_CONSTRAINT = 1  # Applies to only x or y
     RELATIVE_CONSTRAINT = 2
     ASPECT_CONSTRAINT = 3  # Applies to only width or height

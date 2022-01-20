@@ -20,6 +20,9 @@ class DisplayManager:
         self.last_frame = 0
         self.fullscreen = False
         self.on_key_press_methods = {}
+        self.on_mouse_left_methods = []
+        self.on_mouse_right_methods = []
+        self.all_key_event_methods = []
 
     def create_window(self, width, height, title):
         self.width = width
@@ -35,6 +38,7 @@ class DisplayManager:
         glfw.make_context_current(self.window_ID)
 
         glfw.set_key_callback(self.window_ID, self.key_callback)
+        glfw.set_mouse_button_callback(self.window_ID, self.mouse_press_callback)
         glfw.set_window_size_callback(self.window_ID, self.window_resize_callback)
 
         self.last_frame = glfw.get_time()
@@ -61,11 +65,32 @@ class DisplayManager:
                 for f in self.on_key_press_methods[k]:
                     f()
 
+        for f in self.all_key_event_methods:
+            f(key, action)
+
+    def mouse_press_callback(self, window, button, action, mods):
+        if action == glfw.PRESS:
+            if button == glfw.MOUSE_BUTTON_LEFT:
+                for f in self.on_mouse_left_methods:
+                    f()
+            elif button == glfw.MOUSE_BUTTON_RIGHT:
+                for f in self.on_mouse_right_methods:
+                    f()
+
     def bind_key_down(self, key, function):
         if not key in self.on_key_press_methods:
             self.on_key_press_methods[key] = []
 
         self.on_key_press_methods[key].append(function)
+
+    def bind_all_key_event(self, function):
+        self.all_key_event_methods.append(function)
+
+    def bind_mouse_left(self, function):
+        self.on_mouse_left_methods.append(function)
+
+    def bind_mouse_right(self, function):
+        self.on_mouse_right_methods.append(function)
 
     def toggle_fullscreen(self):
         if not self.fullscreen:

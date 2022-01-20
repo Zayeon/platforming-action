@@ -1,8 +1,8 @@
-import pyrr
+import numpy as np
 
 class Camera:
     def __init__(self):
-        self.position = pyrr.Vector3([0, 0, 0])
+        self.position = np.zeros(3, dtype=np.float32)
 
     def set_position(self, x, y):
         self.position[0] = x

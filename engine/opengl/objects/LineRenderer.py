@@ -4,6 +4,8 @@ from OpenGL.GL import *
 import numpy as np
 
 from engine.opengl.GLSLShader import GLSLShader
+from engine.opengl.objects.Line import Line
+
 
 class LineRenderer:
     def __init__(self):
@@ -27,9 +29,11 @@ class LineRenderer:
             # Render lines
             line.vao.bind()
             glEnableVertexAttribArray(0)
-            glDrawArrays(GL_LINES, 0, line.vao.get_vertex_count())
+
+            glDrawArrays(line.mode, 0, line.vao.get_vertex_count())
             line.vao.unbind()
 
         # Clean up
+        glLineWidth(1)
         glDisableVertexAttribArray(0)
         self.line_shader.unbind()
