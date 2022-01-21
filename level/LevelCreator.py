@@ -33,13 +33,14 @@ class LevelCreator:
         self.level = Level()
 
         # Modes
-        self.collision_mode = CollisionMode(self.main_renderer)
-        self.texture_mode = TextureMode()
+        self.active_mode = None
+        self.collision_mode = CollisionMode(self)
+        self.texture_mode = TextureMode(self)
         self.switch_mode(self.collision_mode)
 
     def switch_mode(self, mode):
         self.active_mode = mode
-        self.active_mode.on_switch(self)
+        self.active_mode.on_switch()
 
     def window_to_projection(self, pos, proj):
         pos = np.array(pos, dtype=np.float32)
@@ -78,6 +79,6 @@ class LevelCreator:
             elif self.display_manager.get_key_state(glfw.KEY_S):
                 self.camera.position[1] -= 0.5
 
-            self.active_mode.run(self)
+            self.active_mode.run()
 
             self.display_manager.update_display()

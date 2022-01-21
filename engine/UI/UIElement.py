@@ -27,7 +27,8 @@ class UIElement:
 
         else:
             # Impossible to have height and width be aspect constraints
-            if self.constraints.width[0] == UIConstraints.ASPECT_CONSTRAINT and self.constraints.height[0] == UIConstraints.ASPECT_CONSTRAINT:
+            if self.constraints.width[0] == UIConstraints.ASPECT_CONSTRAINT and self.constraints.height[
+                    0] == UIConstraints.ASPECT_CONSTRAINT:
                 return
 
             # Check cases for absolute and relative constraints for width and height before aspect constraints

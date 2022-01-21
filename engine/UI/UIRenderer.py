@@ -20,7 +20,7 @@ class UIRenderer:
     def set_projection_matrix(self, window_width, window_height):
         matrix = pyrr.matrix44.create_orthogonal_projection(0, window_width, window_height, 0, 0, 100)
         self.text_shader.bind()
-        self.text_shader.set_uniform_mat4fv("projection_matrix", matrix)
+        self.text_shader.set_uniform_mat4fv("projection_matrix", pyrr.matrix44.create_orthogonal_projection(-1, 1, -1, 1, 0, 100))
         self.rect_shader.bind()
         self.rect_shader.set_uniform_mat4fv("projection_matrix", matrix)
 
@@ -31,7 +31,8 @@ class UIRenderer:
         glDisable(GL_DEPTH_TEST)
 
         self.text_shader.bind()
-        self.text_shader.set_uniform_mat4fv("model_matrix", pyrr.matrix44.create_from_scale([100, 50, 1]))
+        model_matrix = np.matmul(label.scale, pyrr.matrix44.create_from_translation([label.x, label.y, 0]))
+        self.text_shader.set_uniform_mat4fv("model_matrix", model_matrix)
         self.text_shader.set_uniform3f("colour", *label.text_colour)
         glBindTexture(GL_TEXTURE_2D, label.font.font_bitmap.get_ID())
 

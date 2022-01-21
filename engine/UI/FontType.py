@@ -68,7 +68,7 @@ class FontType:
         texture_coords = np.array(texture_coords, dtype=np.float32)
 
         width = vertices[0::2].max()
-        height = vertices[1::2].min()
+        height = -vertices[1::2].min()
 
         text_vao = VAO(len(indices))
         text_vao.bind_indices_buffer(indices)
