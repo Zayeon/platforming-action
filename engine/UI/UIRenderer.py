@@ -51,6 +51,8 @@ class UIRenderer:
 
     def render_rect(self, rect):
         # Render rect
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         self.rect_shader.bind()
         self.rect_shader.set_uniform4f("colour_input", *rect.colour)
         rect.vao.bind()
@@ -61,6 +63,7 @@ class UIRenderer:
         # Clean up
         glDisableVertexAttribArray(0)
         self.rect_shader.unbind()
+        glDisable(GL_BLEND)
 
     def render(self, ui):
         if isinstance(ui, UILabel):

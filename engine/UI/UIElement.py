@@ -68,3 +68,12 @@ class UIElement:
         # Calculate position and dimensions for child elements as well
         for element in self.elements:
             element.calculate_pos_dims(window_width, window_height)
+
+    # Event handlers
+    def on_mouse_move(self, xpos, ypos):
+        for element in self.elements:
+            element.on_mouse_move(xpos, ypos)
+
+    def on_mouse_button_event(self, button, action):
+        for element in self.elements:
+            element.on_mouse_button_event(button, action)

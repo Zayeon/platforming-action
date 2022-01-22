@@ -22,7 +22,7 @@ class LevelCreator:
         self.display_manager = DisplayManager()
         self.display_manager.create_window(1280, 720, "Level Creator")
 
-        self.display_manager.bind_mouse_left(self.on_mouse_left)
+        self.display_manager.bind_mouse_button_event(self.on_mouse_left)
         self.display_manager.bind_key_down(glfw.KEY_C, lambda: self.switch_mode(self.collision_mode))
         self.display_manager.bind_key_down(glfw.KEY_T, lambda: self.switch_mode(self.texture_mode))
 
@@ -52,16 +52,17 @@ class LevelCreator:
         pos = pos * proj
         return pos
 
-    def on_mouse_left(self):
-        cursor_pos = self.window_to_projection(self.display_manager.get_cursor_pos(), [16, 9])
-        world_pos = cursor_pos + self.camera.position[:2]
-        for chunk in self.level.chunks:
-            if 32 * chunk["location"][0] < world_pos[0] < 32 * (chunk["location"][0] + 1) and 32 * chunk["location"][
-                    1] < world_pos[1] < 32 * (chunk["location"][1] + 1):
-                cursor_tile = np.floor(world_pos).astype(np.int32)
-                chunk["collision_data"][cursor_tile[0], cursor_tile[1]] = not chunk["collision_data"][
-                    cursor_tile[0], cursor_tile[1]]
-                break
+    def on_mouse_left(self, button, action):
+        if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
+            cursor_pos = self.window_to_projection(self.display_manager.get_cursor_pos(), [16, 9])
+            world_pos = cursor_pos + self.camera.position[:2]
+            for chunk in self.level.chunks:
+                if 32 * chunk["location"][0] < world_pos[0] < 32 * (chunk["location"][0] + 1) and 32 * chunk["location"][
+                        1] < world_pos[1] < 32 * (chunk["location"][1] + 1):
+                    cursor_tile = np.floor(world_pos).astype(np.int32)
+                    chunk["collision_data"][cursor_tile[0], cursor_tile[1]] = not chunk["collision_data"][
+                        cursor_tile[0], cursor_tile[1]]
+                    break
 
     def run(self):
         glClearColor(1.0, 1.0, 1.0, 1.0)

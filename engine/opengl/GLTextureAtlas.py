@@ -41,6 +41,7 @@ class TextureAtlas:
 
     def gen_texture(self, image_data, width, height):
         self.texture_ID = glGenTextures(1)
+        glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, self.texture_ID)
         # Set the texture wrapping parameters
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)

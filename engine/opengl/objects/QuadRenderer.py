@@ -47,6 +47,7 @@ class QuadRenderer:
         sorted_quads = self.sort_quads_by_texture(quads)
 
         for texture_ID in sorted_quads:
+            glActiveTexture(GL_TEXTURE0)
             glBindTexture(GL_TEXTURE_2D, texture_ID)
             for quad in sorted_quads[texture_ID]:
                 self.render_quad(quad)
