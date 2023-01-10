@@ -61,11 +61,16 @@ class TextureAtlas:
         self.current_frame += 1
         if self.current_frame >= self.n_frames:
             self.current_frame = 0
-        self.calculate_tex_coords(self.current_frame)
+        self.calculate_tex_coords()
 
-    def calculate_tex_coords(self, frame):
-        column = frame % self.columns
-        row = frame // self.columns
+    def set_frame(self, n):
+        if 0 <= n < self.n_frames:
+            self.current_frame = n
+            self.calculate_tex_coords()
+
+    def calculate_tex_coords(self):
+        column = self.current_frame % self.columns
+        row = self.current_frame // self.columns
         width_offset = column * self.normal_width
         height_offset = row * self.normal_height
         self.tex_coords = [

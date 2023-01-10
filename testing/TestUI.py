@@ -38,7 +38,7 @@ def main():
     text_constraints.set_y_constraint(UIConstraints.RELATIVE_CONSTRAINT, 0.1)
     text_constraints.set_width_constraint(UIConstraints.RELATIVE_CONSTRAINT, 0.8)
     text_constraints.set_height_constraint(UIConstraints.PIXEL_CONSTRAINT, 50)
-    text = UILabel(text_constraints, font_8bit, "foobar", (1, 0, 0), 1)
+    text = UILabel(text_constraints, font_8bit, "foobar", (1, 0, 0))
 
     button_constraints = UIConstraints()
     button_constraints.set_x_constraint(UIConstraints.PIXEL_CONSTRAINT, 50)
@@ -55,7 +55,7 @@ def main():
     def cb():
         print("Clicked!")
 
-    button = UIButton(button_constraints, cb)
+    button = UIButton(button_constraints)
     rect = UIRect(rect_constraints, [0, 1, 0, 1])
 
     button.add_element(rect)
@@ -65,6 +65,9 @@ def main():
     root.calculate_pos_dims(display_manager.width, display_manager.height)
     display_manager.bind_mouse_button_event(root.on_mouse_button_event)
     display_manager.bind_mouse_move_event(root.on_mouse_move)
+
+    # UI
+
 
 
     main_renderer = MainRenderer(projection_matrix)

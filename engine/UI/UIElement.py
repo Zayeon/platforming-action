@@ -71,9 +71,15 @@ class UIElement:
 
     # Event handlers
     def on_mouse_move(self, xpos, ypos):
+        if not self.show:
+            return
+
         for element in self.elements:
             element.on_mouse_move(xpos, ypos)
 
     def on_mouse_button_event(self, button, action):
+        if not self.show:
+            return
+        
         for element in self.elements:
             element.on_mouse_button_event(button, action)

@@ -6,7 +6,7 @@ from engine.UI.UIElement import UIElement
 
 
 class UILabel(UIElement):
-    def __init__(self, constraints, font, text, text_colour, scale):
+    def __init__(self, constraints, font, text, text_colour):
         super().__init__(constraints)
         self.font = font
         self.text_vao, self.width, self.height = font.construct_text(text)

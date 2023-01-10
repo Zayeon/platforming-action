@@ -7,5 +7,8 @@ class TemplateMode:
     def on_switch(self):
         pass
 
-    def run(self):
+    def update(self):
+        pass
+
+    def render(self):
         pass
